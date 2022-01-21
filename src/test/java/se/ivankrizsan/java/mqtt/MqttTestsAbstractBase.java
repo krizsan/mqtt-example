@@ -40,7 +40,7 @@ public abstract class MqttTestsAbstractBase {
     public static final String TOPIC = "test_mqtt_topic";
     /** Flag indicating whether to use an external MQTT broker or start one using Testcontainers. */
     public static final boolean RUN_MQTT_BROKER_IN_TESTCONTAINER = true;
-    public static final String MOSQUITTO_BROKER_DOCKER_IMAGE = "eclipse-mosquitto:latest";
+    public static final String MOSQUITTO_BROKER_DOCKER_IMAGE = "eclipse-mosquitto:2.0.14";
     /** Mosquitto broker configuration used in test broker. */
     public static final String MOSQUITTO_BROKER_CONFIG = "src/test/resources/mosquitto.conf";
     /** Mosquitto broker configuration path in container. */

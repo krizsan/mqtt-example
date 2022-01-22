@@ -195,6 +195,9 @@ public abstract class MqttTestsAbstractBase {
         }
     }
 
+    /**
+     * Connects the publisher and logs any acknowledge received as result.
+     */
     protected void connectPublisher() {
         final Mqtt5ConnAck theConnectionAck = mMqttPublisher
             .connectWith()
@@ -208,6 +211,9 @@ public abstract class MqttTestsAbstractBase {
         }
     }
 
+    /**
+     * Connects the subscriber and logs any acknowledge received as result.
+     */
     protected void connectSubscriber() {
         final Mqtt5ConnAck theConnectionAck = mMqttSubscriber
             .connectWith()
@@ -221,23 +227,12 @@ public abstract class MqttTestsAbstractBase {
         }
     }
 
-    protected void logMqtt5PublishMessage(final Optional<Mqtt5Publish> inConsumedMsgOptional) {
-        if (inConsumedMsgOptional.isPresent()) {
-            final Mqtt5Publish theConsumedMessage = inConsumedMsgOptional.get();
-            final MqttTopic theConsumedMsgTopic = theConsumedMessage.getTopic();
-            final MqttQos theConsumedMsgQos = theConsumedMessage.getQos();
-            final Optional<ByteBuffer> theConsumedMessagePayloadOptional =
-                theConsumedMessage.getPayload();
-            final String theConsumedMessagePayloadString =
-                theConsumedMessagePayloadOptional.isEmpty()
-                    ? "[n/a]" : StandardCharsets.UTF_8.decode(theConsumedMessagePayloadOptional.get()).toString();
-            LOGGER.info("*** Consumed a message from the topic {} with QoS {} and payload '{}'",
-                theConsumedMsgTopic,
-                theConsumedMsgQos.name(),
-                theConsumedMessagePayloadString);
-        }
-    }
-
+    /**
+     * Runs the supplied runnable in a new thread.
+     *
+     * @param inRunnable Runnable to run in a separate thread.
+     * @return New thread.
+     */
     protected Thread runInNewThread(final Runnable inRunnable) {
         final Thread theThread = new Thread(inRunnable);
         theThread.start();

@@ -8,6 +8,7 @@ import com.hivemq.client.mqtt.mqtt5.message.publish.Mqtt5PublishResult;
 import com.hivemq.client.mqtt.mqtt5.message.publish.pubrec.Mqtt5PubRec;
 import com.hivemq.client.mqtt.mqtt5.message.subscribe.suback.Mqtt5SubAck;
 import com.hivemq.client.mqtt.mqtt5.message.subscribe.suback.Mqtt5SubAckReasonCode;
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,7 +46,6 @@ public class ReactiveMqttClientTests extends MqttTestsAbstractBase {
         connectSubscriber();
 
         /* Subscribe to the topic. */
-        LOGGER.info("*** Subscribing to topic " + TOPIC + "...");
         final Mono<Mqtt5SubAck> theSubscriptionAckMono = mMqttSubscriber
             .subscribeWith()
             .topicFilter(TOPIC)
@@ -55,8 +55,12 @@ public class ReactiveMqttClientTests extends MqttTestsAbstractBase {
         /* Verify that the subscription should have been accepted with minimum QoS 2. */
         StepVerifier
             .create(theSubscriptionAckMono.log())
-            .expectNextMatches(theSubscriptionAck ->
-                Mqtt5SubAckReasonCode.GRANTED_QOS_2 == theSubscriptionAck.getReasonCodes().get(0))
+            .expectNextMatches(theSubscriptionAck -> {
+                final Mqtt5SubAckReasonCode theSubscribeAckReasonCode = theSubscriptionAck.getReasonCodes().get(0);
+                LOGGER.info("*** Successfully subscribed to topic " + TOPIC
+                    + " with subscription acknowledge reason code " + theSubscribeAckReasonCode);
+                return Mqtt5SubAckReasonCode.GRANTED_QOS_2 == theSubscribeAckReasonCode;
+            })
             .expectComplete()
             .verify();
 
@@ -79,7 +83,7 @@ public class ReactiveMqttClientTests extends MqttTestsAbstractBase {
                 .expectNextCount(MESSAGE_COUNT)
                 .expectComplete()
                 .verify();
-
+            LOGGER.info("*** Consumed all messages from topic " + TOPIC);
         });
 
         /* Publish messages. */
